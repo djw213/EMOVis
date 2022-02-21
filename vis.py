@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.stats.stats as st
 
 
 def unpack_platypus(optimiser):
@@ -11,6 +12,21 @@ def unpack_platypus(optimiser):
     X = np.array([soln.variables for soln in optimiser.result])
     Y = np.array([soln.objectives for soln in optimiser.result])
     return X, Y
+
+
+def rank_best_obj(Y):
+    """
+    Rank the given objective vectors according to the objective on which 
+    they have the best rank.
+    """
+    N, M = Y.shape
+    R = np.zeros((N, M))
+
+    for m in range(M):
+        R[:,m] = st.rankdata(Y[:,m])
+    print(R)
+
+    return R.argmin(axis=1).astype(np.int)
 
 
 def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
