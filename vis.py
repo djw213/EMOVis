@@ -13,3 +13,23 @@ def unpack_platypus(optimiser):
     return X, Y
 
 
+def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
+    """
+    Produce a parallel coordinate plot for the objective space provided.
+    """
+    plt.figure()
+    N, M = Y.shape
+
+    if colours is None:
+        colours = ["k"] * N         # Not really ideal, needs fixing.
+
+    objTicks = np.arange(M, dtype=np.int)
+    if xlabels is None:
+        xlabels = objTicks + 1
+    
+    for i in range(N):
+        plt.plot(objTicks, Y[i], c=colours[i])
+
+    plt.xticks(objTicks, xlabels)
+    plt.xlabel("Objective")
+    plt.ylabel("$f(\mathbf{x})$")
