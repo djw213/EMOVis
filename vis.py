@@ -71,6 +71,9 @@ def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
 
 
 def scatter_plot(Z, colours=None, cmap="virids"):
+    """
+    Produce a scatter plot with the embedding provided.
+    """
     plt.figure()
     N = Z.shape[0]
 
@@ -86,6 +89,10 @@ def scatter_plot(Z, colours=None, cmap="virids"):
 
 
 def pca_projection(Y, colours=None, cmap="viridis"):
+    """
+    Project the points into two dimensions with PCA, and produce
+    a corresponding plot.
+    """
     # Perform the PCA projection.
     pca = skd.PCA(n_components=2)
     Z = pca.fit_transform(Y)
@@ -93,6 +100,11 @@ def pca_projection(Y, colours=None, cmap="viridis"):
 
 
 def mds_projection(Y, metric="euclidean", colours=None, cmap="viridis"):
+    """
+    Project the points into two dimensions with MDS, and produce
+    a corresponding plot. Use either Euclidean distance or dominance 
+    distance.
+    """
     if not metric in ["euclidean", "dominance"]:
         raise RuntimeError("Unknown metric - expected 'euclidean' or 'dominance'")
 
