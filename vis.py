@@ -1,6 +1,8 @@
+from turtle import distance
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats.stats as st
+import scipy.spatial.distance as spd
 import sklearn.decomposition as skd
 import sklearn.manifold as skm
 
@@ -68,13 +70,12 @@ def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
     plt.ylabel("$f(\mathbf{x})$")
 
 
-def embedding_plot(model, Y, colours=None, cmap="virids"):
+def scatter_plot(Z, colours=None, cmap="virids"):
     plt.figure()
-    N, M = Y.shape
+    N = Z.shape[0]
 
     if colours is None:
         colours = ["k"] * N         # Not really ideal, needs fixing.
-    Z = model.fit_transform(Y)
 
     # Plot the transformed solutions.
     plt.scatter(Z[:,0], Z[:,1], c=colours, cmap=cmap)
@@ -87,4 +88,29 @@ def embedding_plot(model, Y, colours=None, cmap="virids"):
 def pca_projection(Y, colours=None, cmap="viridis"):
     # Perform the PCA projection.
     pca = skd.PCA(n_components=2)
-    embedding_plot(pca, Y, colours=colours, cmap=cmap)
+    Z = pca.fit_transform(Y)
+    scatter_plot(Z, colours=colours, cmap=cmap)
+
+
+def mds_projection(Y, metric="euclidean", colours=None, cmap="viridis"):
+    if not metric in ["euclidean", "dominance"]:
+        raise RuntimeError("Unknown metric - expected 'euclidean' or 'dominance'")
+
+    N, M = Y.shape
+
+    if metric == "euclidean":
+        mds = skm.MDS(n_components=2)
+        Z = mds.fit_transform(Y)
+        
+    else:
+        # Compute the dominance distance.
+        R = rank_coords(Y)
+        D = np.zeros((N, N))
+        for i in range(N):
+            for j in range(N):
+                D[i,j] = (1/M) * (abs(R[i] - R[j])).sum()
+
+        mds = skm.MDS(n_components=2, dissimilarity="precomputed")
+        Z = mds.fit_transform(D)
+
+    scatter_plot(Z, colours=colours, cmap=cmap)
