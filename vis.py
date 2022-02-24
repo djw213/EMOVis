@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats.stats as st
 import sklearn.decomposition as skd
-import sklearn.feature_extraction as ske
+import sklearn.manifold as skm
 
 
 def unpack_platypus(optimiser):
@@ -68,3 +68,23 @@ def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
     plt.ylabel("$f(\mathbf{x})$")
 
 
+def embedding_plot(model, Y, colours=None, cmap="virids"):
+    plt.figure()
+    N, M = Y.shape
+
+    if colours is None:
+        colours = ["k"] * N         # Not really ideal, needs fixing.
+    Z = model.fit_transform(Y)
+
+    # Plot the transformed solutions.
+    plt.scatter(Z[:,0], Z[:,1], c=colours, cmap=cmap)
+
+    # Tidy up the plot.
+    plt.xticks([])
+    plt.yticks([])
+
+
+def pca_projection(Y, colours=None, cmap="viridis"):
+    # Perform the PCA projection.
+    pca = skd.PCA(n_components=2)
+    embedding_plot(pca, Y, colours=colours, cmap=cmap)

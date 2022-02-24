@@ -13,6 +13,12 @@ if __name__ == "__main__":
 
     # Produce a parallel coordinate plot.
     X, Y = vis.unpack_platypus(optimiser)
-    r = vis.rank_best_obj(Y)
-    vis.parallel_coords(Y, ["rbgcmyk"[c] for c in r])
+    #r = vis.rank_best_obj(Y)
+    #vis.parallel_coords(Y, ["rbgcmyk"[c] for c in r])
+
+    # Produce a PCA projection.
+    r = vis.average_rank(Y) / Y.shape[0]
+    vis.pca_projection(Y, colours=r)
+
+    # Show the visualisations.
     plt.show()
