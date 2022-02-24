@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats.stats as st
+import sklearn.decomposition as skd
+import sklearn.feature_extraction as ske
 
 
 def unpack_platypus(optimiser):
@@ -14,19 +16,34 @@ def unpack_platypus(optimiser):
     return X, Y
 
 
-def rank_best_obj(Y):
+def rank_coords(Y):
     """
-    Rank the given objective vectors according to the objective on which 
-    they have the best rank.
+    Convert the objective vectors to rank coordinates.
     """
     N, M = Y.shape
     R = np.zeros((N, M))
 
     for m in range(M):
         R[:,m] = st.rankdata(Y[:,m])
-    print(R)
 
+    return R
+
+
+def rank_best_obj(Y):
+    """
+    Rank the given objective vectors according to the objective on which 
+    they have the best rank.
+    """
+    R = rank_coords(Y)
     return R.argmin(axis=1).astype(np.int)
+
+
+def average_rank(Y):
+    """
+    Rank the solutions according to their average rank score.
+    """
+    R = rank_coords(Y)
+    return R.mean(axis=1)
 
 
 def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
@@ -49,3 +66,5 @@ def parallel_coords(Y, colours=None, cmap="viridis", xlabels=None):
     plt.xticks(objTicks, xlabels)
     plt.xlabel("Objective")
     plt.ylabel("$f(\mathbf{x})$")
+
+
